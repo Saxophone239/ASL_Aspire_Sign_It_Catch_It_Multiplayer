@@ -19,9 +19,8 @@ public class SICIGameManager : NetworkBehaviour
     [SerializeField] private GameObject gameOverPanel;
     [SerializeField] private TMP_Text gameOverText;
 
-    [SerializeField]
-    [Tooltip("Time Remaining until the game starts")]
-    private float m_delayedStartTime = 15.0f;
+    [Tooltip("Time each round goes for in seconds")]
+    [SerializeField] private float gameStartingTime = 120.0f;
 
     // These help to simplify checking server vs client
     private bool m_isClientGameOver;
@@ -31,8 +30,8 @@ public class SICIGameManager : NetworkBehaviour
     private NetworkVariable<bool> m_isCountdownStarted = new NetworkVariable<bool>();
 
     // The timer should only be synced at the beginning and then let the client to update it in a predictive manner
-    private bool m_isReplicatedTimeSent;
-    private float m_timeRemaining;
+    private bool hasReplicatedTimeBeenSentToClients;
+    private float clientSideTimeRemaining;
 
     private static SICIGameManager instance;
     public static SICIGameManager Instance
@@ -65,16 +64,16 @@ public class SICIGameManager : NetworkBehaviour
             IsGameStarted.Value = true;
 
             // Set our time remaining locally
-            m_timeRemaining = m_delayedStartTime;
+            clientSideTimeRemaining = gameStartingTime;
 
             // Set for server side
             Debug.Log("setting replicated time sent false");
-            m_isReplicatedTimeSent = false;
+            hasReplicatedTimeBeenSentToClients = false;
         }
         else
         {
             // We do a check for the client side value upon instantiating the class (should be zero)
-            Debug.LogFormat("Client side we started with a timer value of {0}", m_timeRemaining);
+            Debug.LogFormat("Client side we started with a timer value of {0}", clientSideTimeRemaining);
         }
     }
 
@@ -134,11 +133,11 @@ public class SICIGameManager : NetworkBehaviour
     private void OnClientConnected(ulong clientId)
     {
         Debug.Log($"client has connected with id: {clientId}");
-        if (m_isReplicatedTimeSent)
+        if (hasReplicatedTimeBeenSentToClients)
         {
-            // Send the RPC only to the newly connected client
+            // // Set replicated time remaining to newly connected client only
             Debug.Log("Sending replicated time via client RPC");
-            SetReplicatedTimeRemainingClientRPC(m_timeRemaining, new ClientRpcParams
+            SetReplicatedTimeRemainingClientRPC(clientSideTimeRemaining, new ClientRpcParams
             {
                 Send = new ClientRpcSendParams
                 {
@@ -177,17 +176,23 @@ public class SICIGameManager : NetworkBehaviour
         if (IsServer)
         {
             // Check if all clients are loaded
-            m_isCountdownStarted.Value = true;
+            // m_isCountdownStarted.Value = true;
+
+            // Check if at least 1 player is in game
+            bool shouldWeStartCountdown = NetworkManager.Singleton.ConnectedClientsList.Count >= 1;
             
             // While we are counting down, continually set the replicated time remaining value for clients (client should only receive the update once)
-            if (m_isCountdownStarted.Value && !m_isReplicatedTimeSent)
+            if (shouldWeStartCountdown && !hasReplicatedTimeBeenSentToClients)
             {
-                SetReplicatedTimeRemainingClientRPC(m_delayedStartTime);
+                // Set replicated time remaining to all clients
+                SetReplicatedTimeRemainingClientRPC(gameStartingTime);
                 Debug.Log("setting replicated time sent true");
-                m_isReplicatedTimeSent = true;
+                m_isCountdownStarted.Value = true;
+                hasReplicatedTimeBeenSentToClients = true;
             }
             
-            return m_isCountdownStarted.Value;
+            //return m_isCountdownStarted.Value;
+            return shouldWeStartCountdown;
         }
         
         return m_isClientStartCountdown;
@@ -197,10 +202,10 @@ public class SICIGameManager : NetworkBehaviour
     private void SetReplicatedTimeRemainingClientRPC(float delayedStartTime, ClientRpcParams clientRpcParams = new ClientRpcParams())
     {
         // See the ShouldStartCountDown method for when the server updates the value
-        if (m_timeRemaining == 0)
+        if (clientSideTimeRemaining == 0)
         {
             Debug.LogFormat("Client side our first timer update value is {0}", delayedStartTime);
-            m_timeRemaining = delayedStartTime;
+            clientSideTimeRemaining = delayedStartTime;
         }
         else
         {
@@ -212,25 +217,25 @@ public class SICIGameManager : NetworkBehaviour
     {
         if (!ShouldStartCountDown()) return;
         
-        if (!IsCurrentGameOver() && m_timeRemaining > 0.0f)
+        if (!IsCurrentGameOver() && clientSideTimeRemaining > 0.0f)
         {
-            m_timeRemaining -= Time.deltaTime;
+            clientSideTimeRemaining -= Time.deltaTime;
             
-            if (IsServer && m_timeRemaining <= 0.0f) // Only the server should be updating this
+            if (IsServer && clientSideTimeRemaining <= 0.0f) // Only the server should be updating this
             {
-                m_timeRemaining = 0.0f;
+                clientSideTimeRemaining = 0.0f;
                 IsGameOver.Value = true;
                 OnTimerEnded();
             }
 
-            if (m_timeRemaining > 0.1f)
+            if (clientSideTimeRemaining > 0.1f)
             {
-                int minutes = Mathf.FloorToInt(m_timeRemaining / 60F);
-                int seconds = Mathf.FloorToInt(m_timeRemaining - minutes * 60);
+                int minutes = Mathf.FloorToInt(clientSideTimeRemaining / 60F);
+                int seconds = Mathf.FloorToInt(clientSideTimeRemaining - minutes * 60);
 
                 string niceTime = string.Format("{0:0}:{1:00}", minutes, seconds);
-                //gameTimerText.SetText(niceTime);
-                gameTimerText.text = niceTime;
+                gameTimerText.SetText(niceTime);
+                //gameTimerText.text = niceTime;
             }
         }
     }
@@ -269,7 +274,7 @@ public class SICIGameManager : NetworkBehaviour
         // If game ended due to timer ending, end game for all players
         if (reason == GameOverReason.TimerOver)
         {
-            this.IsGameOver.Value = true;
+            IsGameOver.Value = true;
             //respawnHandler.DestroyAllPlayers();
             spawner.StopSpawningWords();
             BroadcastGameOverClientRpc(reason); // Notify our clients!

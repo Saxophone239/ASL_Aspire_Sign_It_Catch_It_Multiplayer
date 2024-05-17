@@ -8,10 +8,6 @@ using UnityEngine;
 
 public class FallingWord : Fallable
 {   
-    [Header("Prefabs")]
-    [SerializeField] private GameObject wrongCollectionParticleEffect;
-    [SerializeField] private GameObject rightCollectionParticleEffect;
-
     public event Action<FallingWord> OnCollected;
     public event Action<FallingWord> OnIncorrectCollected;
 
@@ -32,12 +28,7 @@ public class FallingWord : Fallable
 
     public override int Collect()
     {
-        // Show particle effect
-        Instantiate(rightCollectionParticleEffect, transform.position, Quaternion.identity);
-
         coinValue = CoinValue;
-
-        GreyOutWords();
 
         if (!IsServer)
         {
@@ -49,17 +40,24 @@ public class FallingWord : Fallable
         if (alreadyCollected) return 0;
 
         alreadyCollected = true;
-        Debug.Log($"correct word is collected: {wordText.Value}");
+        //Debug.Log($"correct word is collected: {wordText.Value}");
 
+        // Set up clientRpcParams to send to all clients
+        ClientRpcParams clientRpcParams = new ClientRpcParams
+        {
+            Send = new ClientRpcSendParams
+            {
+                TargetClientIds = NetworkManager.ConnectedClientsIds
+            }
+        };
+
+        GreyOutWordsClientRpc(clientRpcParams);
         OnCollected?.Invoke(this);
         return coinValue;
     }
 
     public int CollectIncorrect()
     {
-        // Show particle effect
-        Instantiate(wrongCollectionParticleEffect, transform.position, Quaternion.identity);
-
         if (!IsServer)
         {
             Show(false);
@@ -69,7 +67,7 @@ public class FallingWord : Fallable
         if (alreadyCollected) return 0;
 
         alreadyCollected = true;
-        Debug.Log($"incorrect word is collected: {wordText.Value}");
+        //Debug.Log($"incorrect word is collected: {wordText.Value}");
 
         OnIncorrectCollected?.Invoke(this);
         return 0;
@@ -97,7 +95,8 @@ public class FallingWord : Fallable
         //rb.gravityScale = newValue;
     }
 
-    private void GreyOutWords()
+    [ClientRpc]
+    private void GreyOutWordsClientRpc(ClientRpcParams clientRpcParams)
     {
         GameObject[] currentWords = GameObject.FindGameObjectsWithTag("FallingWord");
 

@@ -15,10 +15,10 @@ public class BasketPlayer : NetworkBehaviour
 
     public NetworkVariable<FixedString32Bytes> PlayerName = new NetworkVariable<FixedString32Bytes>();
 
-    public static event Action<BasketPlayer> OnPlayerSpawned;
-    public static event Action<BasketPlayer> OnPlayerDespawned;
+    public static event Action<BasketPlayer> OnPlayerPrefabSpawned;
+    public static event Action<BasketPlayer> OnPlayerPrefabDespawned;
 
-    public ClientRpcParams m_OwnerRPCParams { get; private set; }
+    public ClientRpcParams ThisClientRpcParams { get; private set; }
 
     // Booleans for powerups
     private bool isLightning = false;
@@ -46,14 +46,14 @@ public class BasketPlayer : NetworkBehaviour
                 userData = ServerSingleton.Instance.GameManager.NetworkServer.GetUserDataByClientId(OwnerClientId);
             }
 
-            
+            // Set up username
             PlayerName.Value = userData.userName;
 
             // Send logic to server when player is spawned
-            OnPlayerSpawned?.Invoke(this);
+            OnPlayerPrefabSpawned?.Invoke(this);
 
             // Set RPC Params
-            m_OwnerRPCParams = new ClientRpcParams { Send = new ClientRpcSendParams { TargetClientIds = new[] { OwnerClientId } } };
+            ThisClientRpcParams = new ClientRpcParams { Send = new ClientRpcSendParams { TargetClientIds = new[] { OwnerClientId } } };
         }
 
         if (IsOwner)
@@ -72,7 +72,7 @@ public class BasketPlayer : NetworkBehaviour
         if (IsServer)
         {
             // Send logic to server when player is despawned
-            OnPlayerDespawned?.Invoke(this);
+            OnPlayerPrefabDespawned?.Invoke(this);
         }
     }
 

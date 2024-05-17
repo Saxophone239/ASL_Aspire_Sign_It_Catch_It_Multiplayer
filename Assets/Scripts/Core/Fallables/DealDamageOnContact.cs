@@ -18,6 +18,7 @@ public class DealDamageOnContact : NetworkBehaviour
         spawner = FindObjectOfType<SICISpawner>();
     }
 
+    // Attached to both server and client versions of apple prefab
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.name != "Platform" && other.gameObject.name != "Collector")
@@ -27,7 +28,7 @@ public class DealDamageOnContact : NetworkBehaviour
 
         if (tag.Equals("FallingWord_Greyed")) return;
 
-        if (other.gameObject.name != "TopCollectorTrigger") return;
+        //if (other.gameObject.name != "TopCollectorTrigger") return;
 
         if (other.attachedRigidbody == null) return;
         
@@ -36,22 +37,45 @@ public class DealDamageOnContact : NetworkBehaviour
             //Debug.Log($"FallingWord has touched player {player.PlayerName.Value}");
             bool isWordCorrect = spawner.CheckIfCollectedWordIsCorrect(word);
 
-            if (player.TryGetComponent<BasketHealth>(out BasketHealth health) &&
-                player.TryGetComponent<CoinWallet>(out CoinWallet wallet))
+            if (IsServer)
             {
-                if (!isWordCorrect)
+                // Set up clientRpcParams to send to all clients
+                ClientRpcParams clientRpcParams = new ClientRpcParams
                 {
-                    // Show particle effect
-                    Instantiate(wrongCollectionParticleEffect, transform.position, Quaternion.identity);
-                    if (IsServer) health.TakeDamage(damage);
-                    wallet.CollectWord(word, isWordCorrect);
-                }
-                else
+                    Send = new ClientRpcSendParams
+                    {
+                        TargetClientIds = NetworkManager.ConnectedClientsIds
+                    }
+                };
+
+                if (player.TryGetComponent<BasketHealth>(out BasketHealth health) &&
+                    player.TryGetComponent<CoinWallet>(out CoinWallet wallet))
                 {
-                    Instantiate(rightCollectionParticleEffect, transform.position, Quaternion.identity);
-                    wallet.CollectWord(word, isWordCorrect);
+                    if (!isWordCorrect)
+                    {
+                        ShowParticleEffectClientRpc(false, transform.position, clientRpcParams);
+                        health.TakeDamage(damage);
+                        wallet.CollectWord(word, isWordCorrect);
+                    }
+                    else
+                    {
+                        ShowParticleEffectClientRpc(true, transform.position, clientRpcParams);
+                        wallet.CollectWord(word, isWordCorrect);
+                    }
                 }
+
+                GetComponent<NetworkObject>().Despawn();
             }
         }
+    }
+
+    [ClientRpc]
+    private void ShowParticleEffectClientRpc(bool isCorrect, Vector3 position, ClientRpcParams clientRpcParams)
+    {
+        GameObject particleEffect;
+        if (isCorrect) particleEffect = rightCollectionParticleEffect;
+        else particleEffect = wrongCollectionParticleEffect;
+
+        Instantiate(particleEffect, position, Quaternion.identity);
     }
 }

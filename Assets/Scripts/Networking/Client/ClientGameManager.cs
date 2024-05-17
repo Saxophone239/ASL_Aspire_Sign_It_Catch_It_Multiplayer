@@ -107,7 +107,8 @@ public class ClientGameManager : IDisposable
     private async Task<MatchmakerPollingResult> GetMatchAsync()
     {
         MatchmakingResult matchmakingResult = await matchmaker.Matchmake(userData);
-        Debug.Log($"matchMakingResult log = {matchmakingResult.resultMessage}");
+        Debug.Log($"server ip is {matchmakingResult.ip}");
+        Debug.Log($"server port is {matchmakingResult.port}");
 
         if (matchmakingResult.result == MatchmakerPollingResult.Success)
         {

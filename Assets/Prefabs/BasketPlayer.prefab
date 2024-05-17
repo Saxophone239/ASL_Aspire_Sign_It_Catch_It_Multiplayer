@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 944757872533629722}
   m_Layer: 7
   m_Name: BottomCollider
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -70,7 +70,7 @@ GameObject:
   - component: {fileID: 8204740926112117624}
   m_Layer: 7
   m_Name: SideCollider
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -133,9 +133,10 @@ GameObject:
   - component: {fileID: 5416053655036683859}
   - component: {fileID: 3720442359367833289}
   - component: {fileID: 5951861220045559386}
+  - component: {fileID: 1147139392394316462}
   m_Layer: 7
   m_Name: BasketPlayer
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -371,6 +372,22 @@ MonoBehaviour:
         byte0027: 0
         byte0028: 0
         byte0029: 0
+--- !u!114 &1147139392394316462
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3161934279111943929}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08290367a5f58e04e9850b9b73be52ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  colorLookup: {fileID: 11400000, guid: 03ac276316ffc9940bfbd29213811b80, type: 2}
+  player: {fileID: 5951861220045559386}
+  playerSprites:
+  - {fileID: 3161934279111943930}
 --- !u!1 &3233307717257392264
 GameObject:
   m_ObjectHideFlags: 0
@@ -385,7 +402,7 @@ GameObject:
   - component: {fileID: 5934197022191207020}
   m_Layer: 7
   m_Name: OverheadCanvas
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -684,7 +701,7 @@ GameObject:
   - component: {fileID: 7076928938427038941}
   m_Layer: 7
   m_Name: TopCollectorTrigger
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -714,7 +731,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}

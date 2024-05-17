@@ -20,8 +20,8 @@ public class CoinWallet : NetworkBehaviour
         }
         
         if (!IsServer) return;
-        Debug.Log($"Before changing TotalCoins adding {coinValue}");
+        //Debug.Log($"Before changing TotalCoins adding {coinValue}");
         TotalCoins.Value += coinValue;
-        Debug.Log($"After changing TotalCoins adding {coinValue}");
+        //Debug.Log($"After changing TotalCoins adding {coinValue}");
     }
 }

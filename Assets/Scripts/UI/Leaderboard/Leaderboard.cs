@@ -43,8 +43,8 @@ public class Leaderboard : NetworkBehaviour
                 HandlePlayerSpawned(player);
             }
 
-            BasketPlayer.OnPlayerSpawned += HandlePlayerSpawned;
-            BasketPlayer.OnPlayerDespawned += HandlePlayerDespawned;
+            BasketPlayer.OnPlayerPrefabSpawned += HandlePlayerSpawned;
+            BasketPlayer.OnPlayerPrefabDespawned += HandlePlayerDespawned;
         }
     }
 
@@ -57,8 +57,8 @@ public class Leaderboard : NetworkBehaviour
 
         if (IsServer)
         {
-            BasketPlayer.OnPlayerSpawned -= HandlePlayerSpawned;
-            BasketPlayer.OnPlayerDespawned -= HandlePlayerDespawned;
+            BasketPlayer.OnPlayerPrefabSpawned -= HandlePlayerSpawned;
+            BasketPlayer.OnPlayerPrefabDespawned -= HandlePlayerDespawned;
         }
     }
 

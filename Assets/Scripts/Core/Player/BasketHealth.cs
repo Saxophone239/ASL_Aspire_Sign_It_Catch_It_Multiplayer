@@ -35,9 +35,9 @@ public class BasketHealth : NetworkBehaviour
         if (IsDead) return;
 
         int newHealth = CurrentHealth.Value + value;
-        Debug.Log("Before changing CurrentHealth");
+        //Debug.Log("Before changing CurrentHealth");
         CurrentHealth.Value = Mathf.Clamp(newHealth, 0, MaxHealth);
-        Debug.Log("After changing CurrentHealth");
+        //Debug.Log("After changing CurrentHealth");
 
         if (CurrentHealth.Value == 0)
         {

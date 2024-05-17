@@ -24,16 +24,16 @@ public class SICIRespawnHandler : NetworkBehaviour
             HandlePlayerSpawned(player);
         }
 
-        BasketPlayer.OnPlayerSpawned += HandlePlayerSpawned;
-        BasketPlayer.OnPlayerDespawned += HandlePlayerDespawned;
+        BasketPlayer.OnPlayerPrefabSpawned += HandlePlayerSpawned;
+        BasketPlayer.OnPlayerPrefabDespawned += HandlePlayerDespawned;
     }
 
     public override void OnNetworkDespawn()
     {
         if (!IsServer) return;
 
-        BasketPlayer.OnPlayerSpawned -= HandlePlayerSpawned;
-        BasketPlayer.OnPlayerDespawned -= HandlePlayerDespawned;
+        BasketPlayer.OnPlayerPrefabSpawned -= HandlePlayerSpawned;
+        BasketPlayer.OnPlayerPrefabDespawned -= HandlePlayerDespawned;
     }
 
     private void HandlePlayerSpawned(BasketPlayer player)
