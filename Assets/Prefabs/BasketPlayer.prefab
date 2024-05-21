@@ -291,7 +291,7 @@ MonoBehaviour:
   rb: {fileID: 3161934279111943928}
   movementSpeed: 10
   maximumVelocity: 5
-  jumpAmount: 5
+  jumpAmount: 6
   gravityScale: 1
   fallingGravityScale: 2
 --- !u!114 &5416053655036683859

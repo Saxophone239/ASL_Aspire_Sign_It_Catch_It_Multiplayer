@@ -10,8 +10,8 @@ public class BasketPlayerMovement : NetworkBehaviour
 {
     [Header("References")]
     [SerializeField] private InputReader inputReader;
-    // [SerializeField] private Transform basketTransform;
     [SerializeField] private Rigidbody2D rb;
+    [SerializeField] private Joystick joystick;
 
     [Header("Settings")]
     [SerializeField] private float movementSpeed = 10f;

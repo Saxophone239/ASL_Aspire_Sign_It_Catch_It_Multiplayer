@@ -18,8 +18,9 @@ using UnityEngine.SceneManagement;
 public class HostGameManager : IDisposable
 {
     private Allocation allocation;
-    private string joinCode;
     private string lobbyId;
+    
+    public string JoinCode { get; private set; }
     public NetworkServer NetworkServer { get; private set; }
     //private const int MaxConnections = 20;
 
@@ -40,8 +41,8 @@ public class HostGameManager : IDisposable
         try
         {
             // Create an allocation using Unity Relay and get a join code
-            joinCode = await Relay.Instance.GetJoinCodeAsync(allocation.AllocationId);
-            Debug.Log(joinCode);
+            JoinCode = await Relay.Instance.GetJoinCodeAsync(allocation.AllocationId);
+            Debug.Log(JoinCode);
         }
         catch (Exception e)
         {
@@ -64,7 +65,7 @@ public class HostGameManager : IDisposable
                 {
                     "JoinCode", new DataObject(
                         visibility: DataObject.VisibilityOptions.Member,
-                        value: joinCode
+                        value: JoinCode
                     )
                 }
             };

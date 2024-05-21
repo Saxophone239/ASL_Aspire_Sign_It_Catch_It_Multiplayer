@@ -11,12 +11,10 @@ using UnityEngine.Video;
 public class SICISpawner : NetworkBehaviour
 {
     [Header("Prefabs")]
-    [SerializeField] private FallingWord word;
+    [SerializeField] private GameObject fallingWordPrefab;
     [SerializeField] private GameObject[] powerUps;
-    [SerializeField] private GameObject serverFallingWord;
-    [SerializeField] private GameObject clientFallingWord;
-    [SerializeField] private GameObject customFallingWordForTesting;
-    
+    // [SerializeField] private GameObject serverFallingWord;
+    // [SerializeField] private GameObject clientFallingWord;
 
     [Header("World Bounds and Parameters")]
     [SerializeField] private Vector2 xSpawnRange;
@@ -51,7 +49,7 @@ public class SICISpawner : NetworkBehaviour
         // TODO: Delete below code when successfully implemented
         VideoManager.GenerateVocabListFromSelectedVocabSet();
 
-        wordRadius = word.GetComponent<CircleCollider2D>().radius;
+        wordRadius = fallingWordPrefab.GetComponent<CircleCollider2D>().radius;
 
         //BasketPlayer.OnPlayerPrefabSpawned += HandlePlayerSpawned;
         rawImage = videoPlayer.gameObject.GetComponent<RawImage>();
@@ -201,7 +199,7 @@ public class SICISpawner : NetworkBehaviour
         Vector2 spawnPos = GetSpawnPoint();
         if (spawnCenter) spawnPos = Vector2.zero;
 
-        GameObject wordInstance = Instantiate(customFallingWordForTesting, spawnPos, Quaternion.identity);
+        GameObject wordInstance = Instantiate(this.fallingWordPrefab, spawnPos, Quaternion.identity);
         wordInstance.GetComponent<NetworkObject>().Spawn();
 
         if (wordInstance.TryGetComponent<FallingWord>(out FallingWord fallingWord))
@@ -220,69 +218,43 @@ public class SICISpawner : NetworkBehaviour
             fallingWord.OnCollected += HandleCorrectWordCollected;
             fallingWord.OnIncorrectCollected += HandleIncorrectWordCollected;
         }
-
-        // GameObject wordInstance = SpawnWordServer(wordValue,
-        //                                 currentWordsToSpawn[randomVocabWordIndex],
-        //                                 fallingSpeed,
-        //                                 spawnPos);
-        // SpawnDummyWordClientRpc(wordValue,
-        //         currentWordsToSpawn[randomVocabWordIndex],
-        //         fallingSpeed,
-        //         spawnPos);
-
-        //Debug.Log($"spawning word with wordText: {wordInstance.wordText.Value}");
     }
 
-    private GameObject SpawnWordServer(int wordValue, string wordText, float fallingSpeed, Vector2 spawnPosition)
-    {
-        GameObject wordInstance = Instantiate(serverFallingWord, spawnPosition, Quaternion.identity);
-        wordInstance.GetComponent<NetworkObject>().Spawn();
+    // private GameObject SpawnWordServer(int wordValue, string wordText, float fallingSpeed, Vector2 spawnPosition)
+    // {
+    //     GameObject wordInstance = Instantiate(serverFallingWord, spawnPosition, Quaternion.identity);
+    //     wordInstance.GetComponent<NetworkObject>().Spawn();
 
-        if (wordInstance.TryGetComponent<FallingWord>(out FallingWord fallingWord))
-        {
-            fallingWord.SetValue(wordValue);
-            fallingWord.SetText(wordText);
-            fallingWord.SetGravityScale(fallingSpeed);
+    //     if (wordInstance.TryGetComponent<FallingWord>(out FallingWord fallingWord))
+    //     {
+    //         fallingWord.SetValue(wordValue);
+    //         fallingWord.SetText(wordText);
+    //         fallingWord.SetGravityScale(fallingSpeed);
 
-            fallingWord.OnCollected += HandleCorrectWordCollected;
-            fallingWord.OnIncorrectCollected += HandleIncorrectWordCollected;
-        }
+    //         fallingWord.OnCollected += HandleCorrectWordCollected;
+    //         fallingWord.OnIncorrectCollected += HandleIncorrectWordCollected;
+    //     }
 
+    //     return wordInstance;
+    // }
 
-        
+    // private GameObject SpawnWordClient(int wordValue, string wordText, float fallingSpeed, Vector2 spawnPosition)
+    // {
+    //     GameObject wordInstance = Instantiate(clientFallingWord, spawnPosition, Quaternion.identity);
+    //     wordInstance.GetComponent<NetworkObject>().Spawn();
 
-        // // Old code below:
-        // FallingWord wordInstance = Instantiate(word, GetSpawnPoint(), Quaternion.identity);
-        // wordInstance.GetComponent<NetworkObject>().Spawn();
+    //     if (wordInstance.TryGetComponent<FallingWord>(out FallingWord fallingWord))
+    //     {
+    //         fallingWord.SetValue(wordValue);
+    //         fallingWord.SetText(wordText);
+    //         fallingWord.SetGravityScale(fallingSpeed);
 
-        // wordInstance.SetValue(wordValue);
-        // wordInstance.SetText(wordText);
-        // wordInstance.SetGravityScale(fallingSpeed);
-        // // Debug.Log($"this time setting word internally as {wordInstance.wordText.Value}");
+    //         fallingWord.OnCollected += HandleCorrectWordCollected;
+    //         fallingWord.OnIncorrectCollected += HandleIncorrectWordCollected;
+    //     }
 
-        // wordInstance.OnCollected += HandleCorrectWordCollected;
-        // wordInstance.OnIncorrectCollected += HandleIncorrectWordCollected;
-
-        return wordInstance;
-    }
-
-    private GameObject SpawnWordClient(int wordValue, string wordText, float fallingSpeed, Vector2 spawnPosition)
-    {
-        GameObject wordInstance = Instantiate(clientFallingWord, spawnPosition, Quaternion.identity);
-        wordInstance.GetComponent<NetworkObject>().Spawn();
-
-        if (wordInstance.TryGetComponent<FallingWord>(out FallingWord fallingWord))
-        {
-            fallingWord.SetValue(wordValue);
-            fallingWord.SetText(wordText);
-            fallingWord.SetGravityScale(fallingSpeed);
-
-            fallingWord.OnCollected += HandleCorrectWordCollected;
-            fallingWord.OnIncorrectCollected += HandleIncorrectWordCollected;
-        }
-
-        return wordInstance;
-    }
+    //     return wordInstance;
+    // }
 
     private Vector2 GetSpawnPoint()
     {
@@ -308,14 +280,14 @@ public class SICISpawner : NetworkBehaviour
         return new Vector2(x, y);
     }
 
-    [ClientRpc]
-    private void SpawnDummyWordClientRpc(int wordValue, string wordText, float fallingSpeed, Vector2 spawnPosition)
-    {
-        SpawnWordClient(wordValue,
-                wordText,
-                fallingSpeed,
-                spawnPosition);
-    }
+    // [ClientRpc]
+    // private void SpawnDummyWordClientRpc(int wordValue, string wordText, float fallingSpeed, Vector2 spawnPosition)
+    // {
+    //     SpawnWordClient(wordValue,
+    //             wordText,
+    //             fallingSpeed,
+    //             spawnPosition);
+    // }
 
     private void HandleCorrectWordCollected(FallingWord word)
     {
