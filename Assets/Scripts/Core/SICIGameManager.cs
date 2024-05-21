@@ -6,6 +6,9 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Assertions;
 
+/// <summary>
+/// Overall manager of game mechanics, such as timer, game over, etc.
+/// </summary>
 public class SICIGameManager : NetworkBehaviour
 {
     [Header("References")]
@@ -175,9 +178,6 @@ public class SICIGameManager : NetworkBehaviour
         
         if (IsServer)
         {
-            // Check if all clients are loaded
-            // m_isCountdownStarted.Value = true;
-
             // Check if at least 1 player is in game
             bool shouldWeStartCountdown = NetworkManager.Singleton.ConnectedClientsList.Count >= 1;
             
@@ -235,7 +235,6 @@ public class SICIGameManager : NetworkBehaviour
 
                 string niceTime = string.Format("{0:0}:{1:00}", minutes, seconds);
                 gameTimerText.SetText(niceTime);
-                //gameTimerText.text = niceTime;
             }
         }
     }

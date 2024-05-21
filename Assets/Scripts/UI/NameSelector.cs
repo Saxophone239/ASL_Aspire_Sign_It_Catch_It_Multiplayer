@@ -32,6 +32,9 @@ public class NameSelector : MonoBehaviour
             nameField.text.Length <= maxNameLength;
     }
 
+    /// <summary>
+    /// Upon button press, set player name and move to next scene
+    /// </summary>
     public void Connect()
     {
         PlayerPrefs.SetString(PlayerNameKey, nameField.text);

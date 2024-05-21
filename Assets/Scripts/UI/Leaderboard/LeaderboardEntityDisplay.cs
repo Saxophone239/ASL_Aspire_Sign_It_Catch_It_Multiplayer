@@ -5,6 +5,9 @@ using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
 
+/// <summary>
+/// The individual UI display for each player on the leaderboard.
+/// </summary>
 public class LeaderboardEntityDisplay : MonoBehaviour
 {
     [SerializeField] private TMP_Text displayText;

@@ -8,6 +8,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
 
+/// <summary>
+/// This script manages spawning in words and powerups.
+/// </summary>
 public class SICISpawner : NetworkBehaviour
 {
     [Header("Prefabs")]
@@ -15,6 +18,7 @@ public class SICISpawner : NetworkBehaviour
     [SerializeField] private GameObject[] powerUps;
     // [SerializeField] private GameObject serverFallingWord;
     // [SerializeField] private GameObject clientFallingWord;
+    [SerializeField] private VideoPlayer videoPlayer;
 
     [Header("World Bounds and Parameters")]
     [SerializeField] private Vector2 xSpawnRange;
@@ -25,19 +29,16 @@ public class SICISpawner : NetworkBehaviour
     private Collider2D[] wordBuffer = new Collider2D[1];
     private float wordRadius;
 
+    public NetworkVariable<FixedString32Bytes> CorrectWord = new NetworkVariable<FixedString32Bytes>();
     public float fallingSpeed = 0.2f;
     public float spawnRate = 1.0f;
 
     // Videoplayer
-    [SerializeField] private VideoPlayer videoPlayer;
     private RawImage rawImage;
 
     private List<string> currentWordsToSpawn = new List<string>();
     private int currentWordsToSpawnSize = 6;
-
-    // Specific correct word/link chosen at period
-    //public string CorrectWord { get; private set; } = "";
-    public NetworkVariable<FixedString32Bytes> CorrectWord = new NetworkVariable<FixedString32Bytes>();
+    
     private bool isSpawnerActive;
 
     //private List<string> vidVocabList;
@@ -121,36 +122,6 @@ public class SICISpawner : NetworkBehaviour
         videoPlayer.Play();
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        // // TODO: Delete below code when successfully implemented
-        // VideoManager.GenerateVocabListFromSelectedVocabSet();
-
-        // // Make videoplayer transparent
-        // rawImage = videoPlayer.gameObject.GetComponent<RawImage>();
-        // rawImage.color = new Color32(255, 255, 255, 0);
-
-        // // Handle difficulty setting
-        // switch (Globals.difficulty)
-		// {
-		// 	case Globals.Difficulty.Easy:
-        //         fallingSpeed = 0.2f;
-        //         spawnRate = 1.2f;
-		// 		break;
-		// 	case Globals.Difficulty.Medium:
-		// 		fallingSpeed = 0.3f;
-        //         spawnRate = 1.0f;
-		// 		break;
-		// 	case Globals.Difficulty.Hard:
-		// 		fallingSpeed = 0.4f;
-        //         spawnRate = 0.8f;
-		// 		break;
-		// }
-
-        //StartSpawningWords();
-    }
-
     private void ChangeVideoplayerVisibility(int visibility)
     {
         // Make videoplayer visible
@@ -181,6 +152,7 @@ public class SICISpawner : NetworkBehaviour
 
         SpawnOneWord();
 
+        // TODO: implement spawning powerups
         // if (Random.Range(0, 10) == 0)
         // {
         //     StartCoroutine(SpawnRandomPowerUp());
@@ -220,6 +192,8 @@ public class SICISpawner : NetworkBehaviour
         }
     }
 
+    // NOTE: below is tested code for spawning in client-specific and server-specific prefabs, below is here for reference.
+
     // private GameObject SpawnWordServer(int wordValue, string wordText, float fallingSpeed, Vector2 spawnPosition)
     // {
     //     GameObject wordInstance = Instantiate(serverFallingWord, spawnPosition, Quaternion.identity);
@@ -256,6 +230,15 @@ public class SICISpawner : NetworkBehaviour
     //     return wordInstance;
     // }
 
+    // [ClientRpc]
+    // private void SpawnDummyWordClientRpc(int wordValue, string wordText, float fallingSpeed, Vector2 spawnPosition)
+    // {
+    //     SpawnWordClient(wordValue,
+    //             wordText,
+    //             fallingSpeed,
+    //             spawnPosition);
+    // }
+
     private Vector2 GetSpawnPoint()
     {
         float x = 0;
@@ -279,16 +262,7 @@ public class SICISpawner : NetworkBehaviour
 
         return new Vector2(x, y);
     }
-
-    // [ClientRpc]
-    // private void SpawnDummyWordClientRpc(int wordValue, string wordText, float fallingSpeed, Vector2 spawnPosition)
-    // {
-    //     SpawnWordClient(wordValue,
-    //             wordText,
-    //             fallingSpeed,
-    //             spawnPosition);
-    // }
-
+    
     private void HandleCorrectWordCollected(FallingWord word)
     {
         Debug.Log($"got correct word, textmeshpro: {word.GetComponentInChildren<TextMeshProUGUI>().text}");

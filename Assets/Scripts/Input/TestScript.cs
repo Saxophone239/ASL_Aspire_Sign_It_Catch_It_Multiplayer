@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Testing script for seeing input manager in action
+/// </summary>
 public class TestScript : MonoBehaviour
 {
     [SerializeField] private InputReader inputReader;

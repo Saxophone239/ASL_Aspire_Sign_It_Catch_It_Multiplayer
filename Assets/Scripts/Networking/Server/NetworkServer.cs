@@ -27,15 +27,24 @@ public class NetworkServer : IDisposable
         networkManager.OnServerStarted += OnNetworkReady;
     }
 
-    // Check if server connection is successful
+    /// <summary>
+    /// Check if server connection is successful
+    /// </summary>
+    /// <param name="ip">The ip to connect to</param>
+    /// <param name="port">The port to connect to</param>
+    /// <returns>Whether connection was successful or not</returns>
     public bool OpenConnection(string ip, int port)
     {
         UnityTransport transport = networkManager.gameObject.GetComponent<UnityTransport>();
         transport.SetConnectionData(ip, (ushort)port);
         return networkManager.StartServer();
     }
-
-    // Grab UserData that is attached to every joining player
+    
+    /// <summary>
+    /// Grab UserData that is attached to every joining player
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="response"></param>
     private void ApprovalCheck(
         NetworkManager.ConnectionApprovalRequest request,
         NetworkManager.ConnectionApprovalResponse response)

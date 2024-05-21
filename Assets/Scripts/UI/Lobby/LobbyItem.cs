@@ -4,6 +4,9 @@ using TMPro;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
 
+/// <summary>
+/// UI element which describes an individual lobby, meant to be used with LobbiesList
+/// </summary>
 public class LobbyItem : MonoBehaviour
 {
     [SerializeField] private TMP_Text lobbyNameText;

@@ -6,6 +6,9 @@ using Unity.Services.Lobbies.Models;
 using Unity.VisualScripting;
 using UnityEngine;
 
+/// <summary>
+/// UI class that manages list of available lobbies to join, using Unity's Lobby service.
+/// </summary>
 public class LobbiesList : MonoBehaviour
 {
     [SerializeField] private SICIMainMenu mainMenu;
@@ -65,6 +68,10 @@ public class LobbiesList : MonoBehaviour
         isRefreshing = false;
     }
 
+    /// <summary>
+    /// Join a lobby
+    /// </summary>
+    /// <param name="lobby">The lobby to join</param>
     public void JoinAsync(Lobby lobby)
     {
         mainMenu.JoinAsync(lobby);

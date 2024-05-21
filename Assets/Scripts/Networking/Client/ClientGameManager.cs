@@ -107,6 +107,8 @@ public class ClientGameManager : IDisposable
     private async Task<MatchmakerPollingResult> GetMatchAsync()
     {
         MatchmakingResult matchmakingResult = await matchmaker.Matchmake(userData);
+
+        // TODO: implement way for players to join server using ip and port below, same way we use joinCode
         Debug.Log($"server ip is {matchmakingResult.ip}");
         Debug.Log($"server port is {matchmakingResult.port}");
 

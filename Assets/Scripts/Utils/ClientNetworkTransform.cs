@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using Unity.Netcode.Components;
 using UnityEngine;
 
-public class ClientNetworkTransform : NetworkTransform  // extend this instead of MonoBehavior
+/// <summary>
+/// Custom network transform meant for client-authoritative purposes,
+/// use for SICI players since we'll trust high schoolers don't know how to hack Unity games.
+/// </summary>
+public class ClientNetworkTransform : NetworkTransform
 {
     public override void OnNetworkSpawn()
     {
@@ -29,7 +33,7 @@ public class ClientNetworkTransform : NetworkTransform  // extend this instead o
             }
         }
     }
-
+    
     protected override bool OnIsServerAuthoritative()
     {
         // Tell servier it no longer has full authorization, instead client does

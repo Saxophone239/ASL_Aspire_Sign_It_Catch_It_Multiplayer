@@ -20,7 +20,7 @@ public class BasketPlayer : NetworkBehaviour
 
     public ClientRpcParams ThisClientRpcParams { get; private set; }
 
-    // Booleans for powerups
+    // TODO: implement powerup system, below are booleans for powerups
     private bool isLightning = false;
     private bool isStopwatch = false;
     private bool isBurger = false;

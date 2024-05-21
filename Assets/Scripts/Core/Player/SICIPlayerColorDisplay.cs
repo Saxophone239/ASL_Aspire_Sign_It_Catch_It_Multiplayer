@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Manage color of each basket
+/// </summary>
 public class SICIPlayerColorDisplay : MonoBehaviour
 {
     [SerializeField] private SICIColorLookup colorLookup;

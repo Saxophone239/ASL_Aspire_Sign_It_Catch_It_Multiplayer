@@ -34,20 +34,14 @@ public class MultiplayAllocationService : IDisposable
     public async Task<MatchmakingResults> SubscribeAndAwaitMatchmakerAllocation()
     {
         if (multiplayService == null) { return null; }
-        Debug.Log("We are beginning subscribing and awaiting matchmaker allocation");
 
         allocationId = null;
         serverCallbacks = new MultiplayEventCallbacks();
         serverCallbacks.Allocate += OnMultiplayAllocation;
-        Debug.Log("Beginning SubscribeToServerEventsAsync");
         serverEvents = await multiplayService.SubscribeToServerEventsAsync(serverCallbacks);
-        Debug.Log("Finished with SubscribeToServerEventsAsync");
 
-        Debug.Log("Starting AwaitAllocationID");
         string allocationID = await AwaitAllocationID();
-        Debug.Log("Starting GetMatchmakerAllocationPayloadAsync");
         MatchmakingResults matchmakingPayload = await GetMatchmakerAllocationPayloadAsync();
-        Debug.Log("Everything's done");
 
         return matchmakingPayload;
     }
@@ -88,8 +82,6 @@ public class MultiplayAllocationService : IDisposable
 
     private void OnMultiplayAllocation(MultiplayAllocation allocation)
     {
-        Debug.Log($"OnAllocation: {allocation.AllocationId}");
-
         if (string.IsNullOrEmpty(allocation.AllocationId)) { return; }
 
         allocationId = allocation.AllocationId;

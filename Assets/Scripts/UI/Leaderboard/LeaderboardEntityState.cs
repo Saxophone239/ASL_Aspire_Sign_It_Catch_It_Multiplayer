@@ -2,12 +2,16 @@ using System;
 using Unity.Collections;
 using Unity.Netcode;
 
+/// <summary>
+/// The individual server-side info for each player on the leaderboard
+/// </summary>
 public struct LeaderboardEntityState : INetworkSerializable, IEquatable<LeaderboardEntityState>
 {
     public ulong ClientId;
     public FixedString32Bytes PlayerName;
     public int Coins;
 
+    // To use as a NetworkVariable, we need to implement a custom serializer
     public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
     {
         serializer.SerializeValue(ref ClientId);

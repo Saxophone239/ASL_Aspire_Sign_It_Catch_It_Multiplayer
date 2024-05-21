@@ -20,6 +20,11 @@ public class ApplicationController : MonoBehaviour
         await LaunchInMode(SystemInfo.graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Null);
     }
 
+    /// <summary>
+    /// Begin logic for launching in a dedicated mode.
+    /// </summary>
+    /// <param name="isDedicatedServer">Whether the computer running this game is server-only or not</param>
+    /// <returns>A Task to be awaited</returns>
     private async Task LaunchInMode(bool isDedicatedServer)
     {
         if (isDedicatedServer)
@@ -52,6 +57,11 @@ public class ApplicationController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// As a server, load the next scene, which is the main game scene.
+    /// </summary>
+    /// <param name="serverSingleton">The server singleton we're using</param>
+    /// <returns>An IEnumerator used for a Coroutine</returns>
     private IEnumerator LoadGameSceneAsync(ServerSingleton serverSingleton)
     {
         AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(BasketGameScenes.GameSceneName);

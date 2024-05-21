@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
+// TODO: implement different maps?
 public enum Map
 {
     Default
@@ -14,6 +15,7 @@ public enum GameMode
     Default
 }
 
+// TODO: implement games? not a priority though
 public enum GameQueue
 {
     Solo,

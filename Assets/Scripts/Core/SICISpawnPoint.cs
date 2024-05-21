@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Manage possible places player can respawn.
+/// </summary>
 public class SICISpawnPoint : MonoBehaviour
 {
     private static List<SICISpawnPoint> spawnPoints = new List<SICISpawnPoint>();

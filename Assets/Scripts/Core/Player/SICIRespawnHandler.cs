@@ -58,6 +58,7 @@ public class SICIRespawnHandler : NetworkBehaviour
 
         // Show respawn UI
         SICIGameManager.Instance.SetGameEnd(GameOverReason.Death);
+        // TODO: show respawn panel when player dies, currently player respawns immediately
         //player.NotifyGameOverClientRpc(GameOverReason.Death, player.m_OwnerRPCParams);
         RespawnPlayer();
     }

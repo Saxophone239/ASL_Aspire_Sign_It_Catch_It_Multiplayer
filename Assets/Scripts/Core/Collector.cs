@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
+/// <summary>
+/// This script deletes any words that pass the basket and enter this collector.
+/// </summary>
 public class Collector : MonoBehaviour
 {
     // This script deletes any words that pass the basket

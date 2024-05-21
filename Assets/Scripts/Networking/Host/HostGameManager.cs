@@ -97,11 +97,13 @@ public class HostGameManager : IDisposable
 
         // Officially start host & change scene to gameplay scene
         HostSingleton.Instance.StartCoroutine(LoadGameSceneAsync());
-
-        //NetworkManager.Singleton.StartHost();
-        //NetworkManager.Singleton.SceneManager.LoadScene(BasketGameScenes.GameSceneName, LoadSceneMode.Single);
     }
 
+    /// <summary>
+    /// Send a ping to the UGS lobby to let them know it's still active
+    /// </summary>
+    /// <param name="waitTimeSeconds">Time between pings in seconds</param>
+    /// <returns>IEnumerator for use with Coroutine</returns>
     private IEnumerator HeartbeatLobby(float waitTimeSeconds)
     {
         WaitForSecondsRealtime delay = new WaitForSecondsRealtime(waitTimeSeconds);

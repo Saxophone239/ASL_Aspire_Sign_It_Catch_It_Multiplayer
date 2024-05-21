@@ -47,8 +47,8 @@ public class BasketPlayerMovement : NetworkBehaviour
     {
         if (!IsOwner) return;
 
-        // Handle double jump logic
-        if (numberOfJumps >= 2) 
+        // TODO: Handle double jump logic
+        //if (numberOfJumps >= 2) 
 
         // Handle falling jump logic
         if (rb.velocity.y >= 0)

@@ -5,6 +5,9 @@ using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
 
+/// <summary>
+/// UI element that manages the Leaderboard system.
+/// </summary>
 public class Leaderboard : NetworkBehaviour
 {
     [SerializeField] private Transform leaderboardEntityHolder;
@@ -24,6 +27,7 @@ public class Leaderboard : NetworkBehaviour
     {
         if (IsClient)
         {
+            // We're the client, so manage the UI
             leaderboardEntities.OnListChanged += HandleLeaderboardEntitiesChanged;
             foreach (LeaderboardEntityState entity in leaderboardEntities)
             {
@@ -37,6 +41,7 @@ public class Leaderboard : NetworkBehaviour
 
         if (IsServer)
         {
+            // We're the server, so manage list of players and coins
             BasketPlayer[] players = FindObjectsOfType<BasketPlayer>();
             foreach(BasketPlayer player in players)
             {
@@ -110,7 +115,7 @@ public class Leaderboard : NetworkBehaviour
             entityDisplays[i].gameObject.SetActive(shouldShow);
         }
 
-        // Still show us even if we don't have high enough of a score
+        // Still show us (the player) even if we don't have high enough of a score
         LeaderboardEntityDisplay myDisplay = entityDisplays.FirstOrDefault(x => x.ClientId == NetworkManager.Singleton.LocalClientId);
 
         if (myDisplay != null)
